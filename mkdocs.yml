@@ -23,15 +23,12 @@ nav:
   - 关于: about.md
   - 标签: tags.md
   - 系列: series.md
-  # - 知识库: "/kb/"
-  # - 系列: series.md
-  # - 项目: projects/README.md
   - 工具: tools.md
   # - 订阅: "/feed.xml"
 
 plugins:
   - tags:
-      # enabled: !ENV [DEPLOY, false]
+      enabled: !ENV [CI, false]
       enabled: true
       tags_file: tags.md
   - blog:
