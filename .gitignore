@@ -1,0 +1,4 @@
+.vscode
+deploy.sh
+poetry.lock
+pyproject.toml
