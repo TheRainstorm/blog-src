@@ -2,3 +2,4 @@
 deploy.sh
 poetry.lock
 pyproject.toml
+site/
