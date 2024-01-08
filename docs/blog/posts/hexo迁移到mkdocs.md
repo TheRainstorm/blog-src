@@ -18,6 +18,11 @@ TODO
 - [ ] 集成评论区:[Adding a comment system - Material for MkDocs (squidfunk.github.io)](https://squidfunk.github.io/mkdocs-material/setup/adding-a-comment-system/)
 - [ ] 看板娘
 
+参考方案
+- [杰哥的{运维，编程，调板子}小笔记 (jia.je)](https://jia.je/)
+- [jiegec/blog-source: The source of my blog. (github.com)](https://github.com/jiegec/blog-source/tree/master)
+- [ヾ(^▽^*)))欢迎回来~ (shaojiemike.top)](https://shaojiemike.top/)
+
 <!-- more -->
 ## mkdocs教程
 
@@ -90,22 +95,24 @@ authors:
     avatar: https://github.com/squidfunk.png
 ```
 
+然后就可以在文档的元数据中添加author列表
 #### linking
 
 > While [post URLs](https://squidfunk.github.io/mkdocs-material/plugins/blog/#config.post_url_format) are dynamically computed, the [built-in blog plugin](https://squidfunk.github.io/mkdocs-material/plugins/blog/) ensures that all links from and to posts and a post's assets are correct.
 
+文档中链接到另一个文档
 ```
 [Hello World!](blog/posts/hello-world.md)
 ```
 
-链接到一个页面，同样只需要指向该页面的索引markdown
+链接到一个页面，只需要指向该页面的索引md文件
 ```
 [Blog](../index.md)
 ```
 
 #### readtime
 
-自动启用，如果嫌估计的不准确，可以手动设置
+显示文章的预计阅读时间。自动启用，如果嫌估计的不准确，可以手动设置
 ```
 ---
 date: 2023-01-31
@@ -128,11 +135,8 @@ build后才会生成，直接serve是看不到的
 [Built-in meta plugin - Material for MkDocs (squidfunk.github.io)](https://squidfunk.github.io/mkdocs-material/plugins/meta/)
 The meta plugin solves the problem of setting metadata (front matter) for all pages in a folder, i.e., a subsection of your project, which is particularly useful to ensure that a certain subset of pages features specific tags, uses a custom template, or is attributed to an author.
 
-
 ## Deploy
 
-参考资料：
-- mkdocs关于deploy文档：[Publishing your site - Material for MkDocs (squidfunk.github.io)](https://squidfunk.github.io/mkdocs-material/publishing-your-site/?h=deploy)
 ### cloudfare page
 
 参考资料：
@@ -140,16 +144,55 @@ The meta plugin solves the problem of setting metadata (front matter) for all pa
 - cf page文档：[Get started guide · Cloudflare Pages docs](https://developers.cloudflare.com/pages/get-started/guide/)
 - cloudflare build platform介绍: [Modernizing the toolbox for Cloudflare Pages builds](https://blog.cloudflare.com/moderizing-cloudflare-pages-builds-toolbox/)
 
-cf page支持很多preset（各种静态网站框架），mkdocs是其中之一，因此配置非常简单。
+cf page优势
+- cf page支持很多preset（各种静态网站框架），mkdocs是其中之一，因此配置非常简单。
+  - gh page只支持Jekyll，其它需要自定义workflow来生成html页面
+- 支持设置**Production branch**和**Preview branch**，监听不同git分支
+- 支持选择不同的build platform，目前有ubuntu22.04和ubuntu20.04
 
-*注意：需要配置`requirements.txt`文件，否则cf build时会报错`mkdocs not found`*
+*注意：需要配置`requirements.txt`文件告诉cf安装依赖，否则cf build时会报错`mkdocs not found`*
+```
+mkdocs-material
+mkdocs-material-extensions
+mkdocs-git-revision-date-localized-plugin
+mkdocs-wavedrom-plugin
+mkdocs-rss-plugin
+```
+
+配置custom domain时直接添加域名即可
 ### github page
 
-github支持多个page！[关于 GitHub Pages - GitHub 文档](https://docs.github.com/zh/pages/getting-started-with-github-pages/about-github-pages)
-> 有三种类型的 GitHub Pages 站点：项目、用户和组织。 项目站点连接到 GitHub 上托管的特定项目，例如 JavaScript 库或配方集合。 用户和组织站点连接到 GitHub.com 上的特定帐户。
-> 若要发布用户站点，必须创建名为 `<username>.github.io` 的个人帐户拥有的存储库。 若要发布组织站点，必须创建名为 `<organization>.github.io` 的组织帐户拥有的存储库。 除非使用的是自定义域，否则用户和组织站点在 `http(s)://<username>.github.io` 或 `http(s)://<organization>.github.io` 中可用。
-> 项目站点的源文件与其项目存储在同一个仓库中。 除非使用的是自定义域，否则项目站点在 `http(s)://<username>.github.io/<repository>` 或 `http(s)://<organization>.github.io/<repository>` 中可用。
+由于原本已经创建过github page了，本以为无法再创建新的github page，然后发现github支持多种page！
+- user, organization page是账户性质的page，对应`<username>.github.io`或`<organization>.github.io`的仓库
+- project page则没有限制，可以创建任意多个，通过`http(s)://<username>.github.io/<repository>`访问。
+  - private仓库创建public page需要github pro以上
 
+参考文档
+- 关于gh page类型，限制：[About GitHub Pages - GitHub Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites)
+- 配置publishing source：[Configuring a publishing source for your GitHub Pages site - GitHub Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+- mkdocs关于deploy文档（github和gitlab）：[Publishing your site - Material for MkDocs (squidfunk.github.io)](https://squidfunk.github.io/mkdocs-material/publishing-your-site/?h=deploy)
+#### 配置publishing source
+
+有两种配置page source方法
+- deploy from a branch：通常对应一个gh-page分支，只包含静态html文件
+  - 可以是本地使用类似`hexo deploy`, `mkdocs gh-deploy`命令生成，然后push到github分支
+  - 也可以是自定义gh workflow，生成然后push到gh-page分支。Most external CI workflows "deploy" to GitHub Pages by committing the build output to the `gh-pages` branch of the repository, and typically include a `.nojekyll` file.
+- github action
+  - 也是先通过action生成静态网站文件，最后通过 [`actions/upload-pages-artifact`](https://github.com/actions/upload-pages-artifact) 和 [`actions/deploy-pages`](https://github.com/actions/deploy-pages)发布到gh page。
+
+mkdocs官方提供的方式是方式1，使用它的workflow脚本，会自动生成静态网站文件并push到gh-page分支。
+*p.s 需要修改其中pip install命令，补充完依赖*
+#### 配置custom domain
+
+> Under "Custom domain", type your custom domain, then click **Save**. If you are publishing your site from a branch, this will create a commit that adds a `CNAME` file directly to the root of your source branch. If you are publishing your site with a custom GitHub Actions workflow, no `CNAME` file is created.
+
+
+配置custom domain
+- 域名解析服务提供商：添加一条CNAME record，指向user.github.io
+- github
+  - 对于source为deploy from a branch，在`/`路径添加CNAME文件，包含CNAME名（通过setting中设置，也会自动创建该CNAME文件）
+  - 对于source为github action，通过setting设置即可，不会创建CNAME文件
+如果已经创建过user或organization site，则创建project site时会自动使用之前的域名
 ## markdown格式修复
 
 原本写的markdown文件有一些格式不太规范，切换成mkdocs后，有许多报错信息。以下列出其中一些问题，并且提供一个自动修复脚本[fix_markdown.py](../../code/fix_markdown.py)，避免一些枯燥的手动修改。
