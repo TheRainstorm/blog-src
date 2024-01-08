@@ -1,0 +1,1576 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="记录一些关于数学、计算机的知识，以及一些日常。">
+      
+      
+      
+        <link rel="canonical" href="https://yfy.cqu.ai/%E6%8A%98%E8%85%BE/2022/08/25/2022-08-25-Openwrt-Mesh%E5%92%8C%E5%BF%AB%E9%80%9F%E6%BC%AB%E6%B8%B8%E9%85%8D%E7%BD%AE/">
+      
+      
+        <link rel="prev" href="../../24/2022-08-24-%E4%BD%BF%E7%94%A8openwrt%E8%B7%AF%E7%94%B1%E5%99%A8%E5%92%8Cusb%E6%91%84%E5%83%8F%E5%A4%B4%E8%BF%9B%E8%A1%8C%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1/">
+      
+      
+        <link rel="next" href="../../../../../%E5%AD%A6%E4%B9%A0/2022/09/19/2022-09-19-x86%E5%AD%A6%E4%B9%A0/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Openwrt Mesh和快速漫游配置 - Rain的随笔</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.50c56a3b.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#背景" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../../../.." title="Rain的随笔" class="md-header__button md-logo" aria-label="Rain的随笔" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Rain的随笔
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Openwrt Mesh和快速漫游配置
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+    
+  
+  博客
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+    
+  
+  关于
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../tags/" class="md-tabs__link">
+        
+  
+    
+  
+  标签
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../series/" class="md-tabs__link">
+        
+  
+    
+  
+  系列
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../tools/" class="md-tabs__link">
+        
+  
+    
+  
+  工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../archive/2024/" class="md-tabs__link">
+          
+  
+  归档
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../category/homelab/" class="md-tabs__link">
+          
+  
+  分类
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Rain的随笔" class="md-nav__button md-logo" aria-label="Rain的随笔" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Rain的随笔
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    博客
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    关于
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../tags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    标签
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../series/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    系列
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    工具
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    归档
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            归档
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2024/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2023
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2022/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2022
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2021/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2021
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2020/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2020
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../archive/2019/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2019
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    分类
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            分类
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/homelab/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    homelab
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E4%B8%AA%E4%BA%BA/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    个人
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E5%8D%9A%E5%AE%A2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    博客
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E8%87%AA%E7%94%B1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    如何实现网络自由
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E5%AD%A6%E4%B9%A0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    工具
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E6%8A%98%E8%85%BE/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    折腾
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E6%9D%82%E6%96%87/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    杂文
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    编程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E8%99%9A%E6%8B%9F%E5%8C%96/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    虚拟化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E8%AE%BE%E5%A4%87/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    设备
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E8%AF%BE%E7%A8%8B/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../category/%E9%98%85%E8%AF%BB/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    阅读
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../.." class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+                  <span class="md-ellipsis">
+                    回到主页
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    元数据
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
+                        <time datetime="2022-08-25 22:17:13" class="md-ellipsis">2022年8月25日</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3H9m3 2 4 13 3-1-4-13-3 1M5 5v13h3V5H5M3 19v2h18v-2H3Z"/></svg>
+                          <span class="md-ellipsis">
+                            分类于
+                            
+                              <a href="../../../../../category/%E6%8A%98%E8%85%BE/">折腾</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              需要 8 分钟阅读时间
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#背景" class="md-nav__link">
+    <span class="md-ellipsis">
+      背景
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="背景">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#名词" class="md-nav__link">
+    <span class="md-ellipsis">
+      名词
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#无线漫游的过程" class="md-nav__link">
+    <span class="md-ellipsis">
+      无线漫游的过程
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#80211s是否需要硬件支持" class="md-nav__link">
+    <span class="md-ellipsis">
+      802.11s是否需要硬件支持
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#安装wpad" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装wpad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dummy-ap配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      dummy AP配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dummy AP配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#关闭dhcp服务器" class="md-nav__link">
+    <span class="md-ellipsis">
+      关闭DHCP服务器
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lan接口ip地址" class="md-nav__link">
+    <span class="md-ellipsis">
+      LAN接口ip地址
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关闭防火墙-dns等服务" class="md-nav__link">
+    <span class="md-ellipsis">
+      关闭防火墙, dns等服务
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mesh配置80211s" class="md-nav__link">
+    <span class="md-ellipsis">
+      mesh配置(802.11s)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#无线80211r配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      无线802.11r配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#效果" class="md-nav__link">
+    <span class="md-ellipsis">
+      效果
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="效果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#结果" class="md-nav__link">
+    <span class="md-ellipsis">
+      结果
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#例子" class="md-nav__link">
+    <span class="md-ellipsis">
+      例子
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例子">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#参考" class="md-nav__link">
+    <span class="md-ellipsis">
+      参考
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#理论" class="md-nav__link">
+    <span class="md-ellipsis">
+      理论
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#测试" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+  
+
+<nav class="md-tags" >
+  
+    
+    
+    
+      <a href="../../../../../tags/#openwrt" class="md-tag">openwrt</a>
+    
+  
+    
+    
+    
+      <a href="../../../../../tags/#mesh" class="md-tag">mesh</a>
+    
+  
+</nav>
+
+
+
+  <h1>Openwrt Mesh和快速漫游配置</h1>
+
+<h2 id="背景">背景<a class="headerlink" href="#背景" title="Permanent link">&para;</a></h2>
+<p>家里原本有两个路由器，一个负责楼上，一个负责楼下。但是仍然有许多覆盖不到的地方，比如厨房。并且更影响体验的是楼上楼下的WIFI使用不同的SSID，手机无法很好地自动切换。经常是楼上连接到楼下的网络导致信号很差。因此决定对家里的网络改造一番。</p>
+<p>以前听过mesh这个技术，可以将很多台路由器通过无线连接起来，共同提供一个网络。于是去搜索了openwrt是否支持mesh，发现是可以的。并且经过进一步的了解，纠正了自己之前对无线网络的一些错误认知。
+- 首先，mesh解决的并不是如何让设备自动切换网络，而是如何进行<strong>无线组网</strong>，可以避免布线的困难。mesh节点通过同一个信道的的无线相互连接，而通过另一个无线提供WIFI。
+- <strong>快速漫游</strong>(fast roaming)协议，准确来说叫做802.11r协议，可以减少设备切换无线网络的耗时。</p>
+<p>硬件设备上，我选择使用小米路由3G来搭建，主要是因为硬件配置上在wifi5的路由器中算是很不错的了，且某鱼上一个只需要50元。于是又买了两个，加上原本的，现在有4台openwrt路由器，一个红米AC2100作为主路由，3个R3G作为AP节点。</p>
+<p>为了方便配置还实现了一个自动配置脚本放在github：<a href="https://github.com/TheRainstorm/my-openwrt-config">TheRainstorm/my-openwrt-config (github.com)</a></p>
+<!-- more -->
+<h3 id="名词">名词<a class="headerlink" href="#名词" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Wireless Access Point
+  无线接入点，通常简称为AP。AP其实隐含dumb的含义。路由器设置里一般会有：路由器模式、AP模式等选项。AP模式下，路由器不提供路由、DHCP、DNS等功能，而是通过主路由来提供。</li>
+<li>AP通常的作用是为现有的网络提供额外的无线覆盖，比如主路由器在二楼，通过AP将网络覆盖到一楼。</li>
+<li>实现上，AP将无线接口和LAN接口桥接在一起，可以理解为一个<strong>二级交换机</strong>。</li>
+<li>SSID、BSSID
+  SSID是无线网络的名称，不同的AP可以提供相同的SSID。BSSID是无线网络的MAC地址，是唯一的。</li>
+</ul>
+<p>802.11k:无线局域网频谱资源测量协议，由AP扫描周围邻居AP信息，配合终端扫描潜在漫游目标信息，解决何时漫游问题。<br />
+802.11v:无线网络管理协议，终端请求漫游目标（非必要），AP建议终端漫游目标，解决漫游到何处问题。<br />
+802.11r:快速BSS转换协议，消除无线重关联过程中的握手开销，极大减少漫游时间，解决如何关重关联问题。</p>
+<p>一、要有自动切换Wi-Fi 信号的效果，只需要支持80.11k和802.11v，然后改相同的Wi-Fi 名称和密码即可，只要终端也支持k和v主会主切换，而802.11r不是必需的。  </p>
+<p>二、MESH组网与自动切换是两回事，没有直接关系。MESH是一种组网方式，而绝大多数MESH组网后就会支持k和v，至少在当今的Wi-Fi 6时代是这样。
+三、无缝漫游，是指自动切换的时间做到尽量的短，从而达到切换过程不会出现断线现象，怎么做到最短呢？这跟“漫游阀值”、“强信号重叠范围”有关，而绝大多数无线路由器一般没有漫游阀值可设置，那最简单可控的就是强信号重叠范围了，通过摆放位置或降低信号强度即可。如有弱信号剔除功能就更有可控性</p>
+<h3 id="无线漫游的过程">无线漫游的过程<a class="headerlink" href="#无线漫游的过程" title="Permanent link">&para;</a></h3>
+<p>需要明白两件事
+- 第一，设备倾向于赖在同一个网络上。当WIFI的信号强度弱于-70dB，且新WIFI的信号强度比原信号高8-12dB时才会选择切换网络。
+- 第二，连接一个网络需要经过一些耗时过程。
+  1. 需要进行密钥交换、协商加密算法
+  2. 设备需要获得一个IP地址（通常通过DHCP协议）</p>
+<p>第一个问题，理论上路由器可以给设备发送信号使其选择切换无线网络，不过不知道目前有没有这么做。
+第二个问题
+- 对于密钥交换和协商的过程很明显是可以避免的，802.11s协议应该就是节约了这部分的时间。只要配置成同一个域，那么在不同BSSID间切换就可以利用原有的连接。
+- 而对于获得IP，只要路由器是AP模式，那么便可以直接使用原本的IP地址，因此也可以使用原本的IP地址。</p>
+<h3 id="80211s是否需要硬件支持">802.11s是否需要硬件支持<a class="headerlink" href="#80211s是否需要硬件支持" title="Permanent link">&para;</a></h3>
+<p>理论上不需要，但是有些硬件的wifi驱动可能会有问题（开源驱动基本不会有问题）
+可以通过iw查看驱动是否有mesh选项。
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>iw list | grep &quot;Supported interface modes&quot; -A 9
+</span></code></pre></div></p>
+<h2 id="配置">配置<a class="headerlink" href="#配置" title="Permanent link">&para;</a></h2>
+<p>可以详细参考这篇文章：<a href="https://bmaupin.github.io/wiki/other/openwrt/openwrt-80211s.html">OpenWrt 802.11s mesh | My wiki (bmaupin.github.io)</a>
+自己写了一个自动配置脚本：<a href="https://github.com/TheRainstorm/my-openwrt-config">TheRainstorm/my-openwrt-config (github.com)</a></p>
+<p>主路由只需要设置802.11r快速漫游即可，而AP则需要设置mesh(802.11s)，并在提供wifi的网络上设置802.11r</p>
+<h4 id="安装wpad">安装wpad<a class="headerlink" href="#安装wpad" title="Permanent link">&para;</a></h4>
+<p>openwrt wifi功能由wpad包提供。openwrt提供了多种wpad包，针对不同功能进行了剪裁，大小不同。不同包会冲突，只能使用一个。使用wpad-mesh-openssl即可。
+- wpad：最完整
+- wpad-openssl
+- <strong>wpad-mesh-openssl</strong>
+- wpad-basic-openssl：精简</p>
+<blockquote>
+<p>Install either <code>wpad-mesh-openssl</code> (for devices with a lot of storage/memory) or <code>wpad-mesh-wolfssl</code> (for devices with low storage/memory)</p>
+</blockquote>
+<h4 id="dummy-ap配置">dummy AP配置<a class="headerlink" href="#dummy-ap配置" title="Permanent link">&para;</a></h4>
+<p>官方文档：[<a href="https://openwrt.org/docs/guide-user/network/wifi/dumbap">OpenWrt Wiki] Wireless Access Point / Dumb Access Point</a></p>
+<h5 id="关闭dhcp服务器">关闭DHCP服务器<a class="headerlink" href="#关闭dhcp服务器" title="Permanent link">&para;</a></h5>
+<p>ipv4勾选ignore interface即可</p>
+<p><img alt="image-20220825185126933" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185126933.png" /></p>
+<p>ipv6需要将ra, dhcpv6, ndp均设置为disabled</p>
+<p><img alt="image-20220825185217075" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185217075.png" /></p>
+<h5 id="lan接口ip地址">LAN接口ip地址<a class="headerlink" href="#lan接口ip地址" title="Permanent link">&para;</a></h5>
+<p>LAN接口需要设置ip地址，有两种方式（推荐第二种方法）
+- 设置静态地址，需要同时设置网关、DNS为主路由</p>
+<p><img alt="image-20220825185519836" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185519836.png" /></p>
+<p><img alt="image-20220825185451076" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185451076.png" /></p>
+<ul>
+<li>更简单的方式为将LAN设置为dhcp客户端。这样好处是不用配置，重启后路由器加入mesh后便可以成功上网。在之后可以在主路由DHCP设置中分配静态地址，这样路由器下次重启便会获得指定ip地址了。</li>
+</ul>
+<p><img alt="image-20220825185619578" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185619578.png" /></p>
+<h5 id="关闭防火墙-dns等服务">关闭防火墙, dns等服务<a class="headerlink" href="#关闭防火墙-dns等服务" title="Permanent link">&para;</a></h5>
+<p>system-&gt;starup中关闭一些不必要的服务，如firewall, dnsmasq, odhcpd</p>
+<p><img alt="image-20220825185835670" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825185835670.png" /></p>
+<p>主要部分已经配置完成。接下来是一些可选操作</p>
+<ul>
+<li>删除掉WAN, WAN6等其余接口</li>
+<li>删除掉所有防火墙zone</li>
+</ul>
+<h4 id="mesh配置80211s">mesh配置(802.11s)<a class="headerlink" href="#mesh配置80211s" title="Permanent link">&para;</a></h4>
+<p>mesh需要占掉一个无线频段，这里我选择使用2.4GHz。因为家里的宽带是100MHz，因此2.4GHz的144Mbps带宽足够，然后就是2.4GHz的穿墙性能要好得多。
+- 选择一个radio新建一个网络，比如2.4GHz radio</p>
+<p><img alt="image-20220825200934634" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825200934634.png" /></p>
+<ul>
+<li>设置WIFI信道，所有mesh节点需要使用相同信道</li>
+</ul>
+<p><img alt="image-20220825221157178" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825221157178.png" /></p>
+<ul>
+<li>然后然后选择mesh point模式。mesh id为一个字符串，保证mesh节点一致即可。加密必须选择wpa3-SAE加密。</li>
+</ul>
+<p><img alt="image-20220825200917273" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825200917273.png" /></p>
+<h4 id="无线80211r配置">无线802.11r配置<a class="headerlink" href="#无线80211r配置" title="Permanent link">&para;</a></h4>
+<p>另一个radio用于提供上网，可以新建一个接口选择AP模式（默认已经存在）</p>
+<p><img alt="image-20220825220833532" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825220833532.png" /></p>
+<p>为了实现快速漫游需要设置802.11r，主要需要设置Mobility Domain，保证所有节点相同</p>
+<p><img alt="image-20220825220609260" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825220609260.png" /></p>
+<p>FT协议的区别，个人感觉不太明显。</p>
+<h2 id="效果">效果<a class="headerlink" href="#效果" title="Permanent link">&para;</a></h2>
+<p>二楼是一台RM2100作为主路由，提供2.4GHz和5GHz WIFI。5GHz使用52信道。</p>
+<p>一楼有3台R3G，通过mesh无线相互连接。其中一台通过网线连接到二楼RM2100。3台R3G启用5GHz WIFI名字相同，分别占用36信道，52信道，100信道。不同信道间刚好相差80MHz等于WIFI5的频宽，因此可以相互不干扰。</p>
+<p>下图分别是二楼主路由和一楼一台路由的信道分析图</p>
+<p><img alt="image-20220825190223518" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825190223518.png" /></p>
+<p><img alt="image-20220825214252429" src="https://raw.githubusercontent.com/TheRainstorm/.image-bed/main/picgo/image-20220825214252429.png" /></p>
+<h4 id="结果">结果<a class="headerlink" href="#结果" title="Permanent link">&para;</a></h4>
+<p>在主路由上开启iperf3服务，手机上安装iperf3客户端测速，并在一楼和二楼走动。经验证确实可以自动实现网络漫游，走到某些位置时网速在降速后马上可以恢复。</p>
+<h2 id="例子">例子<a class="headerlink" href="#例子" title="Permanent link">&para;</a></h2>
+<p>rm2100: 
+- 2.4G mesh + 2.4 Wifi (disabled)
+- 5G wifi
+r3g x 3
+- 2.4G mesh
+- 5G wifi</p>
+<h3 id="参考">参考<a class="headerlink" href="#参考" title="Permanent link">&para;</a></h3>
+<ul>
+<li>设置AP和快速漫游：<a href="https://www.youtube.com/watch?v=kMgs2XFClaM">CHEAP WI-FI MESH ALTERNATIVE with fast roaming OpenWrt Wi-Fi Access points - YouTube</a></li>
+<li>batman，更复杂也功能更多的mesh协议: <a href="https://www.youtube.com/watch?v=t4A0kfg2olo">DIY MESH WiFi with batman-adv and OpenWrt - YouTube</a></li>
+<li>802.11k, v, r的介绍：<a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/network/fast-roaming-with-802-11k--802-11v--and-802-11r">Fast Roaming with 802.11k, 802.11v, and 802.11r - Windows drivers | Microsoft Docs</a></li>
+<li>FT over DS还是FT over Air<a href="https://forum.openwrt.org/t/when-does-802-11r-ft-over-ds-make-sense-to-use/88893/2">When does 802.11r "FT over DS" make sense to use? - Installing and Using OpenWrt / Network and Wireless Configuration - OpenWrt Forum</a></li>
+<li><a href="https://forum.openwrt.org/t/802-11r-fast-roaming-configuration-channels-and-ft/118917/8">802.11r Fast Roaming configuration (channels and FT) - Installing and Using OpenWrt - OpenWrt Forum</a><ul>
+<li>Over-the-Air—The client communicates directly with the target AP using IEEE 802.11 authentication with the FT authentication algorithm. </li>
+<li>Over-the-DS—The client communicates with the target AP through the current AP.</li>
+</ul>
+</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>daemon.debug hostapd: wlan0: STA e0:...:30 WPA: FT authentication already completed - do not start 4-way handshake
+</span></code></pre></div>
+<h2 id="理论">理论<a class="headerlink" href="#理论" title="Permanent link">&para;</a></h2>
+<p><a href="http://wirelessccie.blogspot.com/2016/01/80211r.html?m=1">CCIE Wireless: 802.11r (wirelessccie.blogspot.com)</a></p>
+<ul>
+<li>The <strong>reassociation timeout</strong> determines the duration for which the newly negotiated key is valid. By default, if the client does not make the jump within 20 seconds, the next AP cancels the PMK-R1, considering that the client went elsewhere.</li>
+</ul>
+<p>无线抓包很难办到
+- 需要专门的网卡和驱动
+- <a href="https://zhiliao.h3c.com/theme/details/183006">在Windows电脑上通过wireshark直接无线抓包的方式 - 知了社区 (h3c.com)</a></p>
+<h2 id="测试">测试<a class="headerlink" href="#测试" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>
+</span></code></pre></div>
+<p>正常无线连接op3
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: authentication OK (open system)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: event 0 notification
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-AUTHENTICATE.indication(2a:85:8f:ff:be:e3, OPEN_SYSTEM)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-DELETEKEYS.request(2a:85:8f:ff:be:e3)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Thu Aug 17 22:58:44 2023 daemon.info hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: authenticated
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: association OK (aid 7)
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Thu Aug 17 22:58:44 2023 daemon.info hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: associated (aid 7)
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-ASSOCIATE.indication(2a:85:8f:ff:be:e3)
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-DELETEKEYS.request(2a:85:8f:ff:be:e3)
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: binding station to interface &#39;wlan1&#39;
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: event 1 notification
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: start authentication
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.1X: unauthorizing port
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>Thu Aug 17 22:58:44 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: sending 1/4 msg of 4-Way Handshake
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: EAPOL-Key timeout
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: sending 1/4 msg of 4-Way Handshake
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: received EAPOL-Key frame (2/4 Pairwise)
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: sending 3/4 msg of 4-Way Handshake
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: received EAPOL-Key frame (4/4 Pairwise)
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>Thu Aug 17 22:58:45 2023 daemon.notice hostapd: wlan1: AP-STA-CONNECTED 2a:85:8f:ff:be:e3
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>Thu Aug 17 22:58:45 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.1X: authorizing port
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>Thu Aug 17 22:58:45 2023 daemon.info hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: pairwise key handshake completed (RSN)
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>Thu Aug 17 22:58:45 2023 daemon.notice hostapd: wlan1: EAPOL-4WAY-HS-COMPLETED 2a:85:8f:ff:be:e3
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>Thu Aug 17 22:58:45 2023 daemon.info dnsmasq-dhcp[1]: DHCPREQUEST(br-lan) 192.168.33.218 2a:85:8f:ff:be:e3
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>Thu Aug 17 22:58:45 2023 daemon.info dnsmasq-dhcp[1]: DHCPACK(br-lan) 192.168.33.218 2a:85:8f:ff:be:e3 Redmi-Note-11T-Pro
+</span></code></pre></div></p>
+<p>FT漫游到r3g
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Thu Aug 17 23:01:41 2023 daemon.notice hostapd: wlan1: AP-STA-DISCONNECTED 2a:85:8f:ff:be:e3
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Thu Aug 17 23:01:41 2023 daemon.err hostapd: nl80211: kernel reports: key addition failed
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: binding station to interface &#39;wlan1&#39;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: authentication OK (FT)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-AUTHENTICATE.indication(2a:85:8f:ff:be:e3, FT)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: association OK (aid 1)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Thu Aug 17 23:01:41 2023 daemon.info hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: associated (aid 1)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Thu Aug 17 23:01:41 2023 daemon.notice hostapd: wlan1: AP-STA-CONNECTED 2a:85:8f:ff:be:e3
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 MLME: MLME-REASSOCIATE.indication(2a:85:8f:ff:be:e3)
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 IEEE 802.11: binding station to interface &#39;wlan1&#39;
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: event 6 notification
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>Thu Aug 17 23:01:41 2023 daemon.debug hostapd: wlan1: STA 2a:85:8f:ff:be:e3 WPA: FT authentication already completed - do not start 4-way handshake
+</span></code></pre></div></p>
+<p>在op3上还能看到dhcp
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Thu Aug 17 23:01:42 2023 daemon.info dnsmasq-dhcp[1]: DHCPDISCOVER(br-lan) 2a:85:8f:ff:be:e3
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Thu Aug 17 23:01:42 2023 daemon.info dnsmasq-dhcp[1]: DHCPOFFER(br-lan) 192.168.33.218 2a:85:8f:ff:be:e3
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Thu Aug 17 23:01:42 2023 daemon.info dnsmasq-dhcp[1]: DHCPREQUEST(br-lan) 192.168.33.218 2a:85:8f:ff:be:e3
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Thu Aug 17 23:01:42 2023 daemon.info dnsmasq-dhcp[1]: DHCPACK(br-lan) 192.168.33.218 2a:85:8f:ff:be:e3 Redmi-Note-11T-Pro
+</span></code></pre></div></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+        
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../24/2022-08-24-%E4%BD%BF%E7%94%A8openwrt%E8%B7%AF%E7%94%B1%E5%99%A8%E5%92%8Cusb%E6%91%84%E5%83%8F%E5%A4%B4%E8%BF%9B%E8%A1%8C%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 使用openwrt路由器和usb摄像头进行延时摄影">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                使用openwrt路由器和usb摄像头进行延时摄影
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../../../../%E5%AD%A6%E4%B9%A0/2022/09/19/2022-09-19-x86%E5%AD%A6%E4%B9%A0/" class="md-footer__link md-footer__link--next" aria-label="下一页: x86记录">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                x86记录
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/TheRainstorm" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.footer", "content.code.copy", "toc.follow", "toc.integrate"], "search": "../../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
